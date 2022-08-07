@@ -1,0 +1,4 @@
+---
+certificates_dir: "{{ role_path }}/vars"
+TLS_cert: #Name.crt
+TLS_key: #Name.key

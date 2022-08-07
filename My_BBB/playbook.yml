@@ -1,0 +1,7 @@
+---
+- import_playbook: bigbluebutton.yml
+  tags: bigbluebutton
+- import_playbook: scalelite.yml
+  tags: scalelite
+- import_playbook: greenlight.yml
+  tags: greenlight

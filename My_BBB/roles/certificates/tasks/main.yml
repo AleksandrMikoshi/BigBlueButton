@@ -1,0 +1,38 @@
+---
+- name: create folder for ssl
+  file: path=/opt/ssl state=directory
+  become: true
+
+- name: create folder for ssl_certs_path
+  file: path={{ ssl_private_path }} state=directory
+  become: true
+
+- name: create folder for cert
+  file: path={{ ssl_certs_path }} state=directory
+  become: true
+
+- name: copy TLS cert
+  copy: src="{{ certificates_dir }}/{{ TLS_cert }}" dest={{ ssl_certs_path }}/{{ TLS_cert }} mode=0644
+  become: true
+
+- name: copy TLS key
+  copy: src="{{ certificates_dir }}/{{ TLS_key }}" dest={{ ssl_private_path }}/{{ TLS_key }} owner=root mode=0644
+  become: true
+
+- name: Ensure ca-certificates is installed.
+  package:
+    state: present
+    name: ca-certificates
+
+- name: Ensure certs and private directory exists.
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ ssl_certs_path }}"
+    - "{{ ssl_private_path }}"
+
+- name: Set certificates deployment paths as fact.
+  set_fact:
+    "key_path": "{{ ssl_private_path }}/{{ TLS_key }}"
+    "cert_path": "{{ ssl_certs_path }}/{{ TLS_cert }}"

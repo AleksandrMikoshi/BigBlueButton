@@ -1,0 +1,131 @@
+---
+- name: copy nginx config
+  copy: src=templates/conf.d dest=/opt mode=0644
+  become: true
+
+- name: Check for required variables
+  loop:
+  - scalelite_secret_key
+  - scalelite_loadbalancer_key
+  when: item not in vars
+  fail:
+    msg: "missing required variable: {{ item }}"
+
+- name: Create scalelite group
+  loop: "{{ groups.bigbluebutton }}"
+  become: true
+  delegate_to: "{{ item }}"
+  group:
+    name: scalelite-spool
+    gid: 2000
+
+- name: Add bigbluebutton user to group
+  loop: "{{ groups.bigbluebutton }}"
+  become: true
+  delegate_to: "{{ item }}"
+  user:
+    name: bigbluebutton
+    groups: scalelite-spool
+    append: yes
+
+- name: Create spool directory
+  become: true
+  file:
+    state: directory
+    path: "{{ scalelite_datadir }}/var/bigbluebutton/spool"
+    owner: 1000
+    group: 2000
+    mode: '0775'
+    recurse: yes
+
+- name: Create working directory
+  become: true
+  file:
+    state: directory
+    path: "{{ scalelite_datadir }}/var/bigbluebutton/recording/scalelite"
+    owner: 1000
+    group: 2000
+    mode: '0775'
+    recurse: yes
+
+- name: Create published directory
+  become: true
+  file:
+    state: directory
+    path: "{{ scalelite_datadir }}/var/bigbluebutton/published"
+    owner: 1000
+    group: 1000
+    mode: '0775'
+    recurse: yes
+
+- name: Create unpublished directory
+  become: true
+  file:
+    state: directory
+    path: "{{ scalelite_datadir }}/var/bigbluebutton/unpublished"
+    owner: 1000
+    group: 1000
+    mode: '0775'
+    recurse: yes
+
+- name: Deploy scalelite scalelite_post_publish.rb script
+  loop: "{{ groups.bigbluebutton }}"
+  become: true
+  delegate_to: "{{ item }}"
+  copy:
+    src: files/scalelite_post_publish.rb
+    dest: /usr/local/bigbluebutton/core/scripts/post_publish
+
+- name: Deploy scalelite scalelite.yml file
+  loop: "{{ groups.bigbluebutton }}"
+  become: true
+  delegate_to: "{{ item }}"
+  template:
+    src: templates/scalelite.yml.j2
+    dest: /usr/local/bigbluebutton/core/scripts/scalelite.yml
+
+- name: Generate docker-compose.yml file
+  become: true
+  template:
+    src: templates/docker-compose.yml.j2
+    dest: /opt/containerd/docker-compose.yml
+
+- name: Launch docker-compose
+  become: true
+  docker_compose:
+    project_src: /opt/containerd
+
+- name: Initialize Scalelite database
+  when: scalelite_db_init|bool
+  become: true
+  # https://stackoverflow.com/questions/10301794/difference-between-rake-dbmigrate-dbreset-and-dbschemaload
+  command: >-
+    docker exec -it scalelite-api bin/rake
+    {% if scalelite_db_docker %}db:create{% endif %} db:schema:load db:seed
+
+- name: Retrieve bigbluebutton secret keys
+  delegate_to: "{{ item }}"
+  become: true
+  shell: 'bbb-conf --secret | grep -o "Secret:.*$" | grep -o "[^ ]*$"'
+  register: secret_keys
+  loop: "{{ groups.bigbluebutton }}"
+
+- name: Retrieve servers status
+  loop: "{{ groups.bigbluebutton }}"
+  become: true
+  shell: >-
+    docker exec scalelite-api
+    ./bin/rake servers
+    | grep -o "{{ item }}"
+  ignore_errors: true
+  register: servers
+
+- name: Register the host to scalelite
+  loop: "{{ secret_keys.results|flatten(levels=1) }}"
+  loop_control:
+    index_var: index
+  when: servers.results[index].rc != 0
+  include_tasks: register.yml
+  vars:
+    hostname: "{{ item.item }}.{{ domen }}"
+    key: "{{ item.stdout }}"

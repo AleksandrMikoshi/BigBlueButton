@@ -1,0 +1,55 @@
+- name: Modify bigbluebutton_properties
+  become: true
+  lineinfile:
+    regexp: '^bigbluebutton.web.serverURL=modify'
+    line: "bigbluebutton.web.serverURL=https://{{ ansible_default_ipv4.address }}"
+    path: /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties
+    state: present
+
+- name: Modify bigbluebutton_properties
+  become: true
+  lineinfile:
+    regexp: '^screenshareRtmpServer=modify'
+    line: "screenshareRtmpServer={{ ansible_default_ipv4.address }}"
+    path: /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties
+    state: present
+
+- name: Modify meteor_setting
+  become: true
+  lineinfile:
+    regexp: '    mirrorOwnWebcam: false'
+    line: "    mirrorOwnWebcam: true"
+    path: /usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
+    state: present
+
+- name: Modify meteor_setting
+  become: true
+  lineinfile:
+    regexp: '    hidePresentation: false'
+    line: "    hidePresentation: true"
+    path: /usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
+    state: present
+
+- name: Modify meteor_setting
+  become: true
+  lineinfile:
+    regexp: '    autoSwapLayout: false'
+    line: "    autoSwapLayout: true"
+    path: /usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
+    state: present
+
+- name: Modify meteor_setting
+  become: true
+  lineinfile:
+    regexp: '    autoJoin: true'
+    line: "    autoJoin: false"
+    path: /usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
+    state: present
+
+- name: Modify meteor_setting
+  become: true
+  lineinfile:
+    regexp: '  skipCheck: false'
+    line: "  skipCheck: true"
+    path: /usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
+    state: present

@@ -1,0 +1,43 @@
+---
+- name: Create greenlight directory
+  become: true
+  file:
+    state: directory
+    path: /root/greenlight
+
+- name: Deploy docker-compose file
+  become: true
+  template:
+    src: docker-compose.yml.j2
+    dest: /root/greenlight/docker-compose.yml
+  notify: restart greenlight
+
+- name: Deploy greenlight environment file
+  become: true
+  template:
+    src: templates/env.j2
+    dest: /root/greenlight/.env
+  notify: restart greenlight
+
+- name: Launch docker-compose
+  become: true
+  docker_compose:
+    build: yes
+    pull: yes
+    project_src: /root/greenlight
+
+- name: Install nginx
+  become: true
+  apt:
+    name: nginx
+
+- name: Deploy greenlight vhost
+  become: true
+  template:
+    src: templates/greenlight.conf.j2
+    dest: /etc/nginx/sites-enabled/greenlight.conf
+  notify: restart nginx
+
+- name: Check
+  become: true
+  shell: docker run --rm --env-file /root/greenlight/.env bigbluebutton/greenlight:v2 bundle exec rake conf:check

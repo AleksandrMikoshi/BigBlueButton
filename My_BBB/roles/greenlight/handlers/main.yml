@@ -1,0 +1,11 @@
+---
+- name: restart greenlight
+  become: true
+  docker_compose:
+    project_src: /root/greenlight
+
+- name: restart nginx
+  become: true
+  service:
+    name: nginx
+    state: restarted

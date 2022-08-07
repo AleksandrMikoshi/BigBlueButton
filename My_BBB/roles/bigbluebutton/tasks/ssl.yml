@@ -1,0 +1,65 @@
+---
+- name: Configure Nginx for SSL
+  become: true
+  template:
+    src: bigbluebutton.j2
+    dest: /etc/nginx/sites-available/bigbluebutton
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+    force: yes
+
+- name: Restart Nginx
+  become: true
+  service:
+    name: nginx
+    state: restarted
+
+- name: Modify Freeswitch for SSL (https)
+  become: true
+  replace:
+    path: /etc/bigbluebutton/nginx/sip.nginx
+    regexp: '^        proxy_pass http\:'
+    replace: '        proxy_pass https:'
+  notify: restart bigbluebutton
+  tags: debug
+
+- name: Modify Freeswitch for SSL (port)
+  become: true
+  replace:
+    path: /etc/bigbluebutton/nginx/sip.nginx
+    regexp: '5066\;$'
+    replace: '7443;'
+
+- name: Modify bigbluebutton.properties
+  become: true
+  replace:
+    path: /usr/share/bbb-web/WEB-INF/classes/bigbluebutton.properties
+    regexp: 'web\.serverURL=http\:'
+    replace: 'web.serverURL=https:'
+
+- name: Modify meteor config file (ws)
+  become: true
+  replace:
+    path: /usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
+    regexp: 'ws\:'
+    replace: 'wss:'
+  notify: restart bigbluebutton 
+
+- name: Modify meteor config file (http)
+  become: true
+  replace:
+    path: /usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
+    regexp: 'http\:'
+    replace: 'https:'
+  notify: restart bigbluebutton
+
+- name: Modify recordings creation yml file
+  become: true
+  lineinfile:
+    path: /usr/local/bigbluebutton/core/scripts/bigbluebutton.yml
+    regexp: 'playback_protocol.*$'
+    line: 'playback_protocol: https'
+    state: present
+  notify: restart bigbluebutton

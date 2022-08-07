@@ -1,0 +1,4 @@
+---
+- name: restart bigbluebutton
+  become: true
+  command: bbb-conf --restart

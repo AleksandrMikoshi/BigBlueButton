@@ -1,0 +1,22 @@
+---
+bigbluebutton_configure_firewall: no
+
+bigbluebutton_config:
+  bigbluebutton.web.serverURL=https://{{ ansible_default_ipv4.address }}
+
+bigbluebutton_webrtc:
+  conference-media-specs.H264.tias_content: "1500000"
+  conference-media-specs.H264.as_content: "1500"
+  conference-media-specs.VP8.tias_content: "1500000"
+  conference-media-specs.VP8.as_content: "1500"
+
+bigbluebutton_properties:
+
+domain: #address
+
+full_name: "{{ inventory_hostname }}.{{ domain }}"
+
+logo: #link
+
+ssl_certificate: #Path
+ssl_certificate_key: #Path

@@ -1,0 +1,4 @@
+- name: Check
+  become: true
+  shell: "bbb-conf --status"
+  tags: bigbluebutton
