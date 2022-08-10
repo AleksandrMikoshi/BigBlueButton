@@ -5,10 +5,13 @@
     state: directory
     path: /root/greenlight
 
+- name: Create cert
+  include_tasks: certificate.yml
+
 - name: Deploy docker-compose file
   become: true
   template:
-    src: docker-compose.yml.j2
+    src: templates/docker-compose.yml.j2
     dest: /root/greenlight/docker-compose.yml
   notify: restart greenlight
 
@@ -34,7 +37,7 @@
 - name: Deploy greenlight vhost
   become: true
   template:
-    src: templates/greenlight.conf.j2
+    src: greenlight.conf.j2
     dest: /etc/nginx/sites-enabled/greenlight.conf
   notify: restart nginx
 

@@ -19,7 +19,6 @@ services:
 
 {% if greenlight_db_docker %}
   db:
-    #image: postgres:9.5
     image: postgres:12.1
     ports:
     - 127.0.0.1:5432:5432

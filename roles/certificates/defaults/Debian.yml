@@ -1,3 +1,0 @@
----
-ssl_certs_path: /opt/ssl/public
-ssl_private_path: /opt/ssl/private

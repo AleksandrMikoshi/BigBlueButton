@@ -1,0 +1,17 @@
+- name: 'Copy key'
+  become: true
+  ansible.builtin.copy:
+    content: |
+      -----BEGIN EC PRIVATE KEY-----
+      ***
+      -----END EC PRIVATE KEY-----
+    dest: '{{ ssl_certificate_key }}'
+
+- name: 'Copy cert'
+  become: true
+  ansible.builtin.copy:
+    content: |
+      -----BEGIN CERTIFICATE-----
+      ***
+      -----END CERTIFICATE-----
+    dest: '{{ ssl_certificate }}'

@@ -1,20 +1,15 @@
 ---
-site: #Name
+#
+# Greenlight
+#
+site: # Name
 
-# openssk rand -hex 64
-scalelite_loadbalancer_key: 
-
+ssl_certificate: #Path and name
+ssl_certificate_key: #Path and name
 greenlight_aliases: []
-
-greenlight_docker_image: bigbluebutton/greenlight:v2
-
-greenlight_db_docker: yes
-# only if greenlight_db_docker is false
-#greenlight_db_host:
-greenlight_db_user: greenlight
-greenlight_db_pass: greenlight
-greenlight_db_name: f26b21223835cd8a
-greenlight_logdir: /var/log/greenlight
+greenlight_secret_key: # openssl rand -hex 64
+scalelite_loadbalancer_key: # openssl rand -hex 32
+scalelite_secret_key: # openssl rand -hex 64
 
 greenlight_ldap_server: ''
 greenlight_ldap_port: ''
@@ -25,11 +20,16 @@ greenlight_ldap_bind_dn: ''
 greenlight_ldap_bind_pwd: ''
 greenlight_ldap_role_file: ''
 
+greenlight_db_docker: yes
+# only if greenlight_db_docker is false
+#greenlight_db_host:
+greenlight_db_user: greenlight
+greenlight_db_pass: greenlight
+greenlight_db_name: f26b21223835cd8a
+greenlight_logdir: /var/log/greenlight
+
 greenlight_allow_accounts: "true"
 
 greenlight_report_url: https://github.com/bigbluebutton/greenlight/issues/new
 greenlight_help_url: https://docs.bigbluebutton.org/greenlight/gl-overview.html
-
-domen: #Name
-
-full_name: "{{ inventory_hostname }}.{{ domen }}"
+greenlight_docker_image: bigbluebutton/greenlight:v2

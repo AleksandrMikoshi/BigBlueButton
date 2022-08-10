@@ -67,8 +67,7 @@ services:
     volumes:
     - "{{ scalelite_datadir }}/var/bigbluebutton/published:/var/bigbluebutton/published:ro"
     - /opt/conf.d:/etc/nginx/conf.d
-    - {{ certificates_dir }}/{{ TLS_cert }}:{{ certificates_dir }}/{{ TLS_cert }}
-    - {{ certificates_dir }}/{{ TLS_key }}:{{ certificates_dir }}/{{ TLS_key }}
+    - /etc/ssl/:/etc/ssl/
     environment:
       <<: *ENVS
       NGINX_SSL: 'true'

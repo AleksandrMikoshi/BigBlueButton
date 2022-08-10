@@ -1,4 +1,11 @@
 ---
+- name: Create Nginx ssl dir
+  become: true
+  file:
+    path: /etc/nginx/ssl
+    state: directory
+    mode: '0755'
+
 - name: Configure Nginx for SSL
   become: true
   template:
@@ -45,7 +52,7 @@
     path: /usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
     regexp: 'ws\:'
     replace: 'wss:'
-  notify: restart bigbluebutton 
+  notify: restart bigbluebutton
 
 - name: Modify meteor config file (http)
   become: true

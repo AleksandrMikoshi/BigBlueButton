@@ -1,7 +1,10 @@
 ---
-- name: copy nginx config
+- name: copy config nginx
   copy: src=templates/conf.d dest=/opt mode=0644
   become: true
+
+- name: Create cert
+  include_tasks: certificate.yml
 
 - name: Check for required variables
   loop:

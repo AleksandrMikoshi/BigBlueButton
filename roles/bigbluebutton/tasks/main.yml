@@ -2,14 +2,6 @@
 - set_fact:
     desired_hostname: "{{ inventory_hostname }}"
 
-- name: delete directory
-  become: true
-  shell: "rm -rf /etc/apt/sources.list.d"
-
-- name: create directory
-  become: true
-  shell: "mkdir /etc/apt/sources.list.d"
-
 # Устанавливаем ПО
 - name: Install Prerequisites
   become: true
@@ -43,13 +35,13 @@
 #  run_once: true
   debug:
     msg: >
-      Ready to run wget -qO- https://ubuntu.bigbluebutton.org/bbb-install.sh | bash -s -- -v bionic-240 -s {{ desired_hostname }}.infra.m2.ru -a -w 
-      This takes around 15 mns
+        Ready to run wget -qO- https://ubuntu.bigbluebutton.org/bbb-install.sh | bash -s -- -v bionic-240 -s {{ full_name }} -a -w 
+        This takes around 15 mns
 
 # Установка BBB
 - name: Launch install script
   become: true
-  shell: wget -qO- https://ubuntu.bigbluebutton.org/bbb-install.sh | bash -s -- -v bionic-240 -s {{ desired_hostname }}.infra.m2.ru -a -w 
+  shell: wget -qO- https://ubuntu.bigbluebutton.org/bbb-install.sh | bash -s -- -v bionic-240 -s {{ full_name }} -a -w 
 
 # Установка зависимостей
 - name: Install dependencies
@@ -62,6 +54,12 @@
       - gnupg2
       - software-properties-common
     state: present
+
+- name: setting ssl
+  include_tasks: ssl.yml
+
+- name: Create cert
+  include_tasks: certificate.yml
 
 - name: Running setip
   become: true
@@ -81,7 +79,6 @@
     dest: /var/www/bigbluebutton-default/default.pdf
     mode: +r
 
-# Копирование презентации по умолчанию
 - name: Change bigbluebutton_properties
   become: true
   copy:
@@ -92,26 +89,6 @@
 - name: Configure config
   include_tasks: modify.yml
 
-- name: Manage camera profiles
-  when: bigbluebutton_camera_profiles is defined
-  block:
-  - name: Generate yq script for camera profile
-    copy:
-      dest: /var/cache/yq_cameraProfiles.yml
-      content: |
-        - command: update
-          path: public.kurento.cameraProfiles
-          value:
-          {{ bigbluebutton_camera_profiles|to_nice_yaml|indent(2) }}
-    # notify is here as command module always change
-    notify: restart bigbluebutton
-  
-
-  - name: Set camera profiles
-    command: >-
-      yq w
-      -i
-      -s /var/cache/yq_cameraProfiles.yml
-      /usr/share/meteor/bundle/programs/server/assets/app/config/settings.yml
-
-- include_tasks: ssl.yml
+- name: restart bigbluebutton
+  become: true
+  command: bbb-conf --restart

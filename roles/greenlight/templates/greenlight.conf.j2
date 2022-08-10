@@ -1,5 +1,5 @@
 server {
-  server_name  {{ full_name }} {{ greenlight_aliases|join(' ') }};
+  server_name  {{ site }} {{ greenlight_aliases|join(' ') }};
   listen   80;
   listen [::]:80;
 
@@ -7,13 +7,13 @@ server {
 }
 
 server {
-  server_name  {{ full_name }} {{ greenlight_aliases|join(' ') }};
+  server_name  {{ site }} {{ greenlight_aliases|join(' ') }};
 
   listen 443 ssl;
   listen [::]:443 ssl;
 
-  ssl_certificate {{ certificates_dir }}/{{ TLS_cert }};
-  ssl_certificate_key {{ certificates_dir }}/{{ TLS_key }};
+  ssl_certificate {{ ssl_certificate }};
+  ssl_certificate_key {{ ssl_certificate_key }};
   ssl_session_cache shared:SSL:10m;
   ssl_session_timeout 10m;
   ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
