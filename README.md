@@ -60,3 +60,7 @@ Role for installation and service of BigBlueButton, Scalelite balancer and Green
 # Information about the author
 ------------
 Mikoshi Aleksandr - REAL ESTATE ECOSYSTEM "SQUARE METER" LIMITED LIABILITY COMPANY
+
+# License
+------------
+Massachusetts Institute of Technology, MIT
