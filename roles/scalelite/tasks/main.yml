@@ -130,5 +130,5 @@
   when: servers.results[index].rc != 0
   include_tasks: register.yml
   vars:
-    hostname: "{{ item.item }}.{{ domen }}"
+    hostname: "{{ item.item }}.{{ domain }}"
     key: "{{ item.stdout }}"
