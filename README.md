@@ -14,9 +14,9 @@ Role for installation and service of BigBlueButton, Scalelite balancer and Green
 ------------
 ## For BigBlueButton
 
->`key_file_path` path to the private part of the certificate (with the name of the certificate)
+>`ssl_certificate` path to the private part of the certificate (with the name of the certificate)
 
->`cert_file_path` path to the public part of the certificate (with the name of the certificate)
+>`ssl_certificate_key` path to the public part of the certificate (with the name of the certificate)
 
 
 ## For Greenlight
