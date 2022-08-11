@@ -20,6 +20,9 @@ Role for installation and service of BigBlueButton, Scalelite balancer and Green
 
 
 ## For Greenlight
+>`ssl_certificate` path to the private part of the certificate (with the name of the certificate)
+
+>`ssl_certificate_key` path to the public part of the certificate (with the name of the certificate)
 
 >`site` home address will reach the site
 
@@ -47,6 +50,9 @@ Role for installation and service of BigBlueButton, Scalelite balancer and Green
 
 
 ## For Scalelite
+>`ssl_certificate` path to the private part of the certificate (with the name of the certificate)
+
+>`ssl_certificate_key` path to the public part of the certificate (with the name of the certificate)
 
 >`scalelite_secret_key` API connection key
 
