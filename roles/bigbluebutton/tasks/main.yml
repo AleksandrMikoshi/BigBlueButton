@@ -2,7 +2,6 @@
 - set_fact:
     desired_hostname: "{{ inventory_hostname }}"
 
-# Устанавливаем ПО
 - name: Install Prerequisites
   become: true
   apt:
@@ -20,7 +19,6 @@
     state: present
     force_apt_get: yes
 
-# Проверяем локаль
 - name: Change locale
   locale_gen:
     name: en_US.UTF-8
@@ -30,20 +28,16 @@
   when: bigbluebutton_configure_firewall|bool
   include_tasks: firewall.yml
 
-# Предупреждение пользователя
 - name: Warn user
-#  run_once: true
   debug:
     msg: >
         Ready to run wget -qO- https://ubuntu.bigbluebutton.org/bbb-install.sh | bash -s -- -v bionic-240 -s {{ full_name }} -a -w 
         This takes around 15 mns
 
-# Установка BBB
 - name: Launch install script
   become: true
   shell: wget -qO- https://ubuntu.bigbluebutton.org/bbb-install.sh | bash -s -- -v bionic-240 -s {{ full_name }} -a -w 
 
-# Установка зависимостей
 - name: Install dependencies
   become: true
   apt:
@@ -65,13 +59,11 @@
   become: true
   shell: bbb-conf --setip {{ full_name }}
 
-# Изменение настроек webrtc
 - name: Modify webrtc value
   become: true
   command: yq w -i /usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml {{ item.key }} "{{ item.value }}"
   loop: "{{ bigbluebutton_webrtc|dict2items }}"
 
-# Копирование презентации по умолчанию
 - name: Change default presentation
   become: true
   copy:

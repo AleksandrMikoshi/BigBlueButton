@@ -1,5 +1,4 @@
 ---
-logo: #link
 domain: #address
 ssl_certificate: #Path and name
 ssl_certificate_key: #Path and name
