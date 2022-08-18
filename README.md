@@ -2,12 +2,22 @@
 ------------
 Role for installation and service of BigBlueButton, Scalelite balancer and GreenLight web application
 
+# Scheme
+------------
+
+![](./project/scheme.jpeg)
+
 
 # Requirements
 ------------
-- One server for GreenLight, with wild internet access
 - One server for Scalelite
+- One server for GreenLight, with wild internet access
+    For full access to the Internet, the following ports must be available:
+    TCP = 443
 - N-servers for BigBlueButton, assuming that one BBB with a minimum server configuration supports up to 200 people
+    For full access to the Internet, the following ports must be available:
+    TCP = 443, 80, 7443, 6556
+    UDP = 16384:32768
 
 
 # Used variables

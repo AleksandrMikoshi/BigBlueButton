@@ -64,13 +64,6 @@
   command: yq w -i /usr/local/bigbluebutton/bbb-webrtc-sfu/config/default.yml {{ item.key }} "{{ item.value }}"
   loop: "{{ bigbluebutton_webrtc|dict2items }}"
 
-- name: Change default presentation
-  become: true
-  copy:
-    src: files/default.pdf
-    dest: /var/www/bigbluebutton-default/default.pdf
-    mode: +r
-
 - name: Change bigbluebutton_properties
   become: true
   copy:
