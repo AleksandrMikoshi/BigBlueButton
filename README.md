@@ -2,6 +2,8 @@
 ------------
 Role for installation and service of BigBlueButton, Scalelite balancer and GreenLight web application
 
+This ansible role installs BigBlueButton v.2.4 on Ubuntu 18.04
+
 # Scheme
 ------------
 
